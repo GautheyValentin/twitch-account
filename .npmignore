@@ -1,0 +1,13 @@
+/src/**/*
+.prettierrc
+.gitignore
+jest.config.js
+yarn.lock
+tsconfig.json
+.npmrc
+.circleci
+.env
+.env.sample
+dist/*.spec.js
+.eslintrc.js
+environement.d.ts
