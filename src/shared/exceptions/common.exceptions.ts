@@ -24,6 +24,12 @@ export class TwitchMailVerificationException extends Exception {
   }
 }
 
+export class TwitchInvalidUsernameException extends Exception {
+  constructor(message?: string) {
+    super(`This is username is invalid: ${message}`);
+  }
+}
+
 export class TwitchMailParseException extends Exception {
   constructor() {
     super(`Failed to parse mail received by twitch`);

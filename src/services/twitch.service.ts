@@ -25,11 +25,22 @@ export class TwitchService {
   private clientId: string;
   private proxy?: AxiosProxyConfig;
 
+  private headers: any = {
+    Accept: '*/*',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Accept-Language': 'fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3',
+    Connection: 'keep-alive',
+    'Sec-Fetch-Dest': 'empty',
+    'Sec-Fetch-Mode': 'cors',
+    'Sec-Fetch-Site': 'same-site',
+  };
+
   constructor(options: TwitchServiceOptions) {
     this.clientId = options.clientId;
     this.proxy = options.proxy;
     this.userAgent =
       options.userAgent || new UserAgent({ platform: 'Win32' }).toString();
+    this.headers['User-Agent'] = this.userAgent;
   }
 
   async create(payload: CreateUserPayload): Promise<TwitchResponseCreateUser> {
@@ -37,11 +48,13 @@ export class TwitchService {
       const {
         data: { userID, access_token },
       } = await axios.post(TwitchService.SIGN_UP_PASSPORT_URL, payload, {
-        proxy: this.proxy,
         headers: {
-          'User-Agent': this.userAgent,
+          ...this.headers,
+          Origin: 'https://passport.twitch.tv',
         },
+        proxy: this.proxy,
       });
+
       return {
         userId: userID,
         accessToken: access_token,
@@ -86,6 +99,37 @@ export class TwitchService {
     return opaqueID;
   }
 
+  async isUserNameValid(username: string): Promise<boolean> {
+    const {
+      data: {
+        data: { isUsernameAvailable },
+      },
+    } = await axios.post(
+      TwitchService.GQL_URL,
+      {
+        operationName: 'UsernameValidator_User',
+        variables: {
+          username,
+        },
+        extensions: {
+          persistedQuery: {
+            version: 1,
+            sha256Hash:
+              'fd1085cf8350e309b725cf8ca91cd90cac03909a3edeeedbd0872ac912f3d660',
+          },
+        },
+      },
+      {
+        headers: {
+          ...this.headers,
+          'client-id': this.clientId,
+        },
+        proxy: this.proxy,
+      },
+    );
+    return isUsernameAvailable;
+  }
+
   async verifyMail(opaqueID: string): Promise<void> {
     try {
       const { data } = await axios.post(
@@ -106,17 +150,29 @@ export class TwitchService {
         },
         {
           headers: {
+            ...this.headers,
             'client-id': this.clientId,
-            'User-Agent': this.userAgent,
           },
           proxy: this.proxy,
         },
       );
+
       if (!data?.data?.verifyContactMethod?.isSuccess) {
         throw new Error('Not a success');
       }
     } catch (e) {
       throw new TwitchMailVerificationException(e?.message);
     }
+  }
+
+  async CurlCookie(): Promise<any> {
+    const { headers } = await axios.get(TwitchService.SIGN_UP_URL, {
+      headers: {
+        ...this.headers,
+        Referer: 'https://www.google.com/',
+      },
+      proxy: this.proxy,
+    });
+    this.headers.Cookie = headers['set-cookie'];
   }
 }

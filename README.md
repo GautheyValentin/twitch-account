@@ -8,15 +8,19 @@
 yarn add twitch-account
 ```
 
+## TroubleShooting
+
+Exception ``TwitchCaptchaInvalidException`` is frequent if proxy is fraud detected by the KYC service (Arkose)
+
 ## Doc
 Follow the test file : package.spec.ts
+
+Run test : ``yarn test``
 
 ## TODO
 - Scrap 
   - Client ID
   - FunCapcha Token
-- Process Complete with Exception traitement
-- Improove Header and Cookie / Session to bypass security  
 
 ## Licence
 MIT

@@ -24,5 +24,5 @@ export function GenerateUser(options: GenerateUserOptions): BaseUser {
 export function ParseTokenCaptcha(token: string): string {
   return token
     .replace(new RegExp('funcaptcha.com', 'g'), 'client-api.arkoselabs.com')
-    .replace('|pk=', '|lang=en|pk=');
+    .replace('|pk=', '|lang=fr|pk=');
 }

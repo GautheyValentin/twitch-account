@@ -2,9 +2,9 @@ import {
   AntiCaptchaService,
   MailService,
   TwitchService,
-  TwitchCaptchaInvalidException,
   GenerateUser,
   ParseTokenCaptcha,
+  TwitchInvalidUsernameException,
 } from './index';
 import dotenv from 'dotenv';
 import UserAgent from 'user-agents';
@@ -19,6 +19,7 @@ describe('Package Tester', () => {
     const CLIENT_ID = 'kimne78kx3ncx6brgo4mv6wki5h1ko';
     const CAPTCHA_KEY = 'E5554D43-23CC-1982-971D-6A2262A2CA24';
     const GENERATE_CAPTCHA = true;
+    // const PROXY = undefined;
     const PROXY = {
       host: process.env.PROXY_HOST,
       port: Number(process.env.PROXY_PORT),
@@ -29,7 +30,12 @@ describe('Package Tester', () => {
       protocol: process.env.PROXY_TYPE,
     };
 
-    const USER_AGENT = new UserAgent({ platform: 'Win32' }).toString();
+    const USER_AGENT = new UserAgent({
+      deviceCategory: 'mobile',
+      connection: {
+        effectiveType: '4g',
+      },
+    }).toString();
 
     const MailClient = new MailService({ domain: DOMAIN, proxy: PROXY });
     const TwitchClient = new TwitchService({
@@ -43,47 +49,54 @@ describe('Package Tester', () => {
       userAgent: USER_AGENT,
     });
 
+    console.log('Generate Traditional Cookie');
+
+    await TwitchClient.CurlCookie();
+
     const UserData = GenerateUser({
       email: {
         domain: MailClient.domain,
       },
     });
 
-    let createSuccess = false;
-    let User;
+    console.log(`Verify username : ${UserData.username}`);
 
-    do {
-      let ParsedCaptcha;
-      if (GENERATE_CAPTCHA) {
-        console.log('Generate Captcha');
+    if (!(await TwitchClient.isUserNameValid(UserData.username))) {
+      throw new TwitchInvalidUsernameException(UserData.username);
+    }
 
-        const UnParsedCaptcha = await AntiCaptcha.resolve({
-          url: TwitchService.SIGN_UP_URL,
-          key: CAPTCHA_KEY,
-        });
+    let ParsedCaptcha;
 
-        ParsedCaptcha = ParseTokenCaptcha(UnParsedCaptcha);
-      }
+    if (GENERATE_CAPTCHA) {
+      console.log('Generate Captcha');
 
-      const UserPayload = TwitchClient.generatePayload({
-        user: UserData,
-        token: ParsedCaptcha,
+      const UnParsedCaptcha = await AntiCaptcha.resolve({
+        url: TwitchService.SIGN_UP_URL,
+        key: CAPTCHA_KEY,
       });
 
-      console.log('Create User');
-      try {
-        User = await TwitchClient.create(UserPayload);
-        createSuccess = true;
-      } catch (e) {
-        if (!(e instanceof TwitchCaptchaInvalidException)) throw e;
-        console.log('Captcha Failed Retry');
-      }
-    } while (!createSuccess);
+      ParsedCaptcha = ParseTokenCaptcha(UnParsedCaptcha);
+    }
+
+    const UserPayload = TwitchClient.generatePayload({
+      user: UserData,
+      token: ParsedCaptcha,
+    });
+
+    console.log('Create User');
+
+    const User = await TwitchClient.create(UserPayload);
+
+    console.log({
+      ...User,
+      ...UserData,
+    });
 
     console.log('Get Mail');
 
     const MailContent = await MailClient.getContentLastMailWithRetry(
       UserData.id,
+      20,
     );
 
     const OpaqueID = TwitchClient.getOpaqueIdFromMailVerification(MailContent);
@@ -91,10 +104,5 @@ describe('Package Tester', () => {
     console.log('Verify Mail');
 
     await TwitchClient.verifyMail(OpaqueID);
-
-    console.log({
-      ...User,
-      ...UserData,
-    });
   });
 });

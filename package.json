@@ -1,13 +1,13 @@
 {
   "name": "twitch-account",
   "description": "Create a twitch account",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "dist/index.js",
   "license": "MIT",
   "author": "GAUTHEY Valentin",
   "scripts": {
     "dev": "ts-node-dev --respawn --watch --clear -r src/index.ts",
-    "build": "tsc",
+    "build": "rm -Rf dist && tsc",
     "start": "node build/index.js",
     "test": "jest"
   },
