@@ -4,13 +4,13 @@ import {
   TwitchMailParseException,
   TwitchMailVerificationException,
   TwitchUsernameAlreadyExistException,
-} from '@shared/exceptions/common.exceptions';
+} from '../shared/exceptions/common.exceptions';
 import {
   CreateUserPayload,
   GeneratePayloadOptions,
   TwitchResponseCreateUser,
   TwitchServiceOptions,
-} from '@shared/types/app.types';
+} from '../shared/types/app.types';
 import axios, { AxiosError, AxiosProxyConfig } from 'axios';
 import UserAgent from 'user-agents';
 

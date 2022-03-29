@@ -1,20 +1,16 @@
 {
   "compilerOptions": {
-    "target":"ES2017",
+    "target":"es6",
     "experimentalDecorators":true,
     "emitDecoratorMetadata":true,
     "module":"commonjs",
-    "baseUrl":"./",
-    "paths":{
-      "@services/*": ["./src/services/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@shared/*": ["./src/shared/*"]
-    },
     "outDir":"./dist",
     "esModuleInterop":true,
     "forceConsistentCasingInFileNames":true,
     "strict":true,
     "skipLibCheck":true,
-    "useUnknownInCatchVariables":false
+    "useUnknownInCatchVariables":false,
+    "declaration": true,
+    "declarationDir": "./dist/types"
   }
 }

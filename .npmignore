@@ -8,6 +8,6 @@ tsconfig.json
 .circleci
 .env
 .env.sample
-dist/*.spec.js
+*.spec.js
 .eslintrc.js
 environement.d.ts

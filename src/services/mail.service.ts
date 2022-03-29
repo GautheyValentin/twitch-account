@@ -1,9 +1,9 @@
 import {
   MailFetchException,
   NoMailException,
-} from '@shared/exceptions/common.exceptions';
-import { MailServiceOptions } from '@shared/types/app.types';
-import { AllMailResponse } from '@shared/types/mail.types';
+} from '../shared/exceptions/common.exceptions';
+import { MailServiceOptions } from '../shared/types/app.types';
+import { AllMailResponse } from '../shared/types/mail.types';
 import axios, { AxiosProxyConfig } from 'axios';
 
 export class MailService {

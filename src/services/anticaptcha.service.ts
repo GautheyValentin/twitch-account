@@ -1,6 +1,6 @@
-import { AntiCaptchaException } from '@shared/exceptions/common.exceptions';
-import { ResolveOptions } from '@shared/types/anticaptcha.types';
-import { AntiCaptchaServiceOptions } from '@shared/types/app.types';
+import { AntiCaptchaException } from '../shared/exceptions/common.exceptions';
+import { ResolveOptions } from '../shared/types/anticaptcha.types';
+import { AntiCaptchaServiceOptions } from '../shared/types/app.types';
 import { AntiCaptcha, TaskTypes } from 'anticaptcha';
 import { AxiosProxyConfig } from 'axios';
 

@@ -1,5 +1,5 @@
 import faker from '@faker-js/faker';
-import { BaseUser, GenerateUserOptions } from '@shared/types/app.types';
+import { BaseUser, GenerateUserOptions } from '../shared/types/app.types';
 import { v4 as uuid } from 'uuid';
 
 export function GenerateUser(options: GenerateUserOptions): BaseUser {
