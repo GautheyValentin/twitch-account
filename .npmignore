@@ -9,5 +9,6 @@ tsconfig.json
 .env
 .env.sample
 *.spec.js
+*.spec.d.ts
 .eslintrc.js
 environement.d.ts
