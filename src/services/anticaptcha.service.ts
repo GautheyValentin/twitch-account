@@ -26,9 +26,9 @@ export class AntiCaptchaService {
             proxyLogin: this.proxy.auth?.username,
             proxyPassword: this.proxy.auth?.password,
           }
-        : undefined;
+        : {};
       const taskId = await this.client.createTask({
-        type: proxy ? TaskTypes.FUN_CAPTCHA : 'FunCaptchaTaskProxyless',
+        type: this.proxy ? TaskTypes.FUN_CAPTCHA : 'FunCaptchaTaskProxyless',
         websiteURL: options.url,
         websitePublicKey: options.key,
         userAgent: this.userAgent,

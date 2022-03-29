@@ -45,7 +45,7 @@ describe('Package Tester', () => {
     });
     const AntiCaptcha = new AntiCaptchaService({
       apiKey: process.env.ANTICAPTCHA_API_KEY,
-      proxy: PROXY,
+      // proxy: PROXY,
       userAgent: USER_AGENT,
     });
 
